@@ -73,4 +73,14 @@ public class Person {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Position position;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "group_persons",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Group> groups;
 }

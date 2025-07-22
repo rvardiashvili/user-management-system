@@ -1,10 +1,7 @@
 package org.example.employeemanagement.utils;
 
-import org.example.employeemanagement.domain.Permission;
-import org.example.employeemanagement.domain.Person;
-import org.example.employeemanagement.domain.Role;
+import org.example.employeemanagement.domain.*;
 import org.example.employeemanagement.repositories.UserRepository;
-import org.example.employeemanagement.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -60,6 +57,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         for (Permission permission : person.getPermissions()) {
             authorities.add(new SimpleGrantedAuthority(permission.getName()));
+        }
+        for (Group group : person.getGroups()) {
+            for(Permission permission : group.getPermissions()){
+                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+            }
         }
         return authorities;
     }

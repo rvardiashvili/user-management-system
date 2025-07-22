@@ -13,8 +13,11 @@ public class UserResponse {
     private String lastName;
     private String dateOfBirth;
     private Role role;
+    private Position position;
     private Set<Permission> permissions;
     private Set<Address> addresses;
+    private Set<Group> groups;
+
     public UserResponse(){}
 
     public UserResponse(User user) {
@@ -29,6 +32,8 @@ public class UserResponse {
             }
             this.permissions = user.getPerson().getPermissions();
             this.addresses = user.getPerson().getAddresses();
+            this.position = user.getPerson().getPosition();
+            this.groups = user.getPerson().getGroups();
         }
     }
 

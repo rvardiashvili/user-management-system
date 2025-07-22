@@ -55,6 +55,7 @@ public class UserService {
         dto.setRole(person.getRole());
         dto.setPermissions(person.getPermissions());
         dto.setAddresses(person.getAddresses());
+        dto.setPosition(person.getPosition());
         return dto;
     }
     @Transactional(readOnly = true)
@@ -73,6 +74,7 @@ public class UserService {
         }
         dto.setRole(person.getRole());
         dto.setPermissions(person.getPermissions());
+        dto.setPosition(person.getPosition());
         return dto;
     }
 
