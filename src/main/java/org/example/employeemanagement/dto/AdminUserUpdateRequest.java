@@ -10,4 +10,5 @@ public class AdminUserUpdateRequest {
     private String lastName;
     private String status;
     private Set<String> roles;
+    private Set<String> permissions;
 }

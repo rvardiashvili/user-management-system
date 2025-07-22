@@ -1,12 +1,3 @@
-CREATE TABLE companies (
-    company_id BIGINT NOT NULL AUTO_INCREMENT,
-    company_name VARCHAR(255) NOT NULL,
-    industry VARCHAR(255),
-    created_at DATETIME NOT NULL DEFAULT NOW(),
-    updated_at DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (company_id)
-);
-
 CREATE TABLE addresses (
     address_id BIGINT NOT NULL AUTO_INCREMENT,
     street VARCHAR(255) NOT NULL,
@@ -46,12 +37,10 @@ CREATE TABLE persons (
 
 CREATE TABLE positions (
     position_id BIGINT NOT NULL AUTO_INCREMENT,
-    company_id BIGINT NOT NULL,
     position_name VARCHAR(255) NOT NULL,
     description TEXT,
     created_at DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (position_id),
-    FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
+    PRIMARY KEY (position_id)
 );
 
 CREATE TABLE roles (
@@ -79,13 +68,7 @@ CREATE TABLE person_addresses (
     FOREIGN KEY (address_id) REFERENCES addresses(address_id) ON DELETE CASCADE
 );
 
-CREATE TABLE company_addresses (
-    company_id BIGINT NOT NULL,
-    address_id BIGINT NOT NULL,
-    PRIMARY KEY (company_id, address_id),
-    FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE,
-    FOREIGN KEY (address_id) REFERENCES addresses(address_id) ON DELETE CASCADE
-);
+
 
 CREATE TABLE person_positions (
     person_id BIGINT NOT NULL,

@@ -1,6 +1,7 @@
 package org.example.employeemanagement.dto;
 
 import lombok.Data;
+import org.example.employeemanagement.domain.Permission;
 import org.example.employeemanagement.domain.Person;
 import org.example.employeemanagement.domain.Role;
 import org.example.employeemanagement.domain.User;
@@ -15,7 +16,7 @@ public class UserResponse {
     private String lastName;
     private String dateOfBirth;
     private Set<Role> roles;
-
+    private Set<Permission> permissions;
     public UserResponse(){}
 
     public UserResponse(User user) {
@@ -24,9 +25,11 @@ public class UserResponse {
         if (user.getPerson() != null) {
             this.firstName = user.getPerson().getFirstName();
             this.lastName = user.getPerson().getLastName();
+            this.roles = user.getPerson().getRoles();
             if (user.getPerson().getDateOfBirth() != null) {
                 this.dateOfBirth = user.getPerson().getDateOfBirth().toString();
             }
+            this.permissions = user.getPerson().getPermissions();
         }
     }
 

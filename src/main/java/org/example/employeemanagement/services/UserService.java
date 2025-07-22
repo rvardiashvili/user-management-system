@@ -1,9 +1,10 @@
 package org.example.employeemanagement.services;
 
-import jakarta.validation.Valid;
+import org.example.employeemanagement.domain.Permission;
 import org.example.employeemanagement.domain.Person;
 import org.example.employeemanagement.domain.User;
 import org.example.employeemanagement.dto.*;
+import org.example.employeemanagement.repositories.PermissionRepository;
 import org.example.employeemanagement.repositories.RoleRepository;
 import org.example.employeemanagement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,21 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
+
     private User getUserByEmail(String email) {
+
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
+    private User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
+    }
 
-    public UserResponse getMyDetails(String email) {
+    @Transactional(readOnly = true)
+    public UserResponse getDetails(String email) {
+
         User user = getUserByEmail(email);
         Person person = user.getPerson();
 
@@ -39,8 +49,29 @@ public class UserService {
         dto.setEmail(user.getEmail());
         dto.setFirstName(person.getFirstName());
         dto.setLastName(person.getLastName());
+        if(person.getDateOfBirth() != null) {
         dto.setDateOfBirth(person.getDateOfBirth().toString());
+        }
         dto.setRoles(person.getRoles());
+        dto.setPermissions(person.getPermissions());
+        return dto;
+    }
+    @Transactional(readOnly = true)
+    public UserResponse getDetails(Long id) {
+
+        User user = getUserById(id);
+        Person person = user.getPerson();
+
+        UserResponse dto = new UserResponse();
+        dto.setUserId(user.getUserId());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(person.getFirstName());
+        dto.setLastName(person.getLastName());
+        if(person.getDateOfBirth() != null) {
+            dto.setDateOfBirth(person.getDateOfBirth().toString());
+        }
+        dto.setRoles(person.getRoles());
+        dto.setPermissions(person.getPermissions());
         return dto;
     }
 
@@ -55,14 +86,16 @@ public class UserService {
     public UserResponse updateMyDetails(String email, UpdatePersonRequest request) {
         User user = getUserByEmail(email);
         Person person = user.getPerson();
-
-        person.setFirstName(request.getFirstName());
-        person.setLastName(request.getLastName());
-        person.setDateOfBirth(request.getDateOfBirth());
+        if(request.getFirstName() != null)
+            person.setFirstName(request.getFirstName());
+        if(request.getLastName() != null)
+            person.setLastName(request.getLastName());
+        if(request.getDateOfBirth() != null)
+            person.setDateOfBirth(request.getDateOfBirth());
 
         userRepository.save(user);
 
-        return getMyDetails(email);
+        return getDetails(email);
     }
 
     @Transactional
@@ -99,7 +132,6 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
         Person person = user.getPerson();
 
-        // Update email if provided
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
                 throw new IllegalStateException("Email already in use by another account.");
@@ -128,15 +160,18 @@ public class UserService {
             }
             person.setRoles(newRoles);
         }
-
+        if(request.getPermissions() != null) {
+            Set<Permission> newPermissions = new HashSet<>();
+            for (String permissionName : request.getPermissions()) {
+                Permission permission = permissionRepository.findByName(permissionName)
+                        .orElseThrow(() -> new RuntimeException("Permission not found: " + permissionName));
+                newPermissions.add(permission);
+            }
+            person.setPermissions(newPermissions);
+        }
         User updatedUser = userRepository.save(user);
         return new UserDetails(updatedUser);
     }
 
-    @Transactional(readOnly = true)
-    public UserDetails getUserDetails(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
-        return new UserDetails(user);
-    }
+
 }

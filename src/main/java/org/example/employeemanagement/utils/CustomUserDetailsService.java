@@ -1,6 +1,7 @@
 package org.example.employeemanagement.utils;
 
 import org.example.employeemanagement.domain.Permission;
+import org.example.employeemanagement.domain.Person;
 import org.example.employeemanagement.domain.Role;
 import org.example.employeemanagement.repositories.UserRepository;
 import org.example.employeemanagement.domain.User;
@@ -12,11 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,29 +24,25 @@ import java.util.Set;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         if (email == null || email.isBlank()) {
-            log.warn("Attempt to login with empty or null email.");
             throw new UsernameNotFoundException("Email cannot be empty.");
         }
+        System.out.println(email);
+        System.out.println("logging in");
 
-        log.info("Attempting to load user by email: {}", email);
 
         User user = userRepository.findByEmailWithDetails(email)
                 .orElseThrow(() -> {
-                    log.warn("User not found with email: {}", email);
                     return new UsernameNotFoundException("User not found with email: " + email);
                 });
-
-        log.info("User found with email: {}", email);
-        Collection<? extends GrantedAuthority> authorities = getAuthorities(user.getPerson().getRoles());
-        log.info("User {} has authorities: {}", email, authorities); // Log the authorities
-
+        System.out.println("logged in");
+        Collection<? extends GrantedAuthority> authorities = getAuthorities(user.getPerson());
+        System.out.println("authorities: " + authorities);
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
@@ -57,13 +51,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Set<Role> roles) {
+    private Collection<? extends GrantedAuthority> getAuthorities(Person person) {
         Set<GrantedAuthority> authorities = new HashSet<>();
+        Set<Role> roles = person.getRoles();
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
             for (Permission permission : role.getPermissions()) {
                 authorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
+        }
+        for (Permission permission : person.getPermissions()) {
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
         }
         return authorities;
     }

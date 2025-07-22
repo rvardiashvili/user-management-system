@@ -21,23 +21,29 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyDetails(Authentication authentication) {
-        return ResponseEntity.ok(userService.getMyDetails(authentication.getName()));
+        return ResponseEntity.ok(userService.getDetails(authentication.getName()));
+    }
+
+    @GetMapping("/users/email/{email}")
+    @PreAuthorize("hasAuthority('view-users')")
+    public ResponseEntity<UserResponse> getUser(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getDetails(email));
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('view-users')")
-    public ResponseEntity<List<UserResponse>> getAllUsers(Authentication authentication) {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/users/{userId}")
     @PreAuthorize("hasAuthority('view-users')")
-    public ResponseEntity<UserDetails> getUserDetails(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getUserDetails(userId));
+    public ResponseEntity<UserResponse> getUserDetails(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getDetails(userId));
     }
 
     @PutMapping("/users/{userId}")
-    @PreAuthorize("hasAuthority('system-permissions')")
+    @PreAuthorize("hasAuthority('edit-users')")
     public ResponseEntity<UserDetails> updateUserDetails(@PathVariable Long userId, @Valid @RequestBody AdminUserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUserDetails(userId, request));
     }
