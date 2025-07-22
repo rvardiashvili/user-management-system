@@ -16,7 +16,7 @@ public class UserDetails {
     private String email;
     private String firstName;
     private String lastName;
-    private Set<String> roles;
+    private String role;
 
     public UserDetails(User user) {
         this.userId = user.getUserId();
@@ -25,9 +25,7 @@ public class UserDetails {
             Person person = user.getPerson();
             this.firstName = person.getFirstName();
             this.lastName = person.getLastName();
-            this.roles = person.getRoles().stream()
-                    .map(Role::getName)
-                    .collect(Collectors.toSet());
+            this.role = person.getRole().getName();
         }
     }
 }

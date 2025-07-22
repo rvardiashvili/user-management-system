@@ -1,18 +1,17 @@
 package org.example.employeemanagement.services;
 
-import org.example.employeemanagement.domain.Permission;
-import org.example.employeemanagement.domain.Person;
-import org.example.employeemanagement.domain.User;
+import org.example.employeemanagement.domain.*;
 import org.example.employeemanagement.dto.*;
+import org.example.employeemanagement.repositories.AddressRepository;
 import org.example.employeemanagement.repositories.PermissionRepository;
 import org.example.employeemanagement.repositories.RoleRepository;
 import org.example.employeemanagement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.example.employeemanagement.domain.Role;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
+    private final AddressRepository addressRepository;
 
     private User getUserByEmail(String email) {
 
@@ -52,8 +52,9 @@ public class UserService {
         if(person.getDateOfBirth() != null) {
         dto.setDateOfBirth(person.getDateOfBirth().toString());
         }
-        dto.setRoles(person.getRoles());
+        dto.setRole(person.getRole());
         dto.setPermissions(person.getPermissions());
+        dto.setAddresses(person.getAddresses());
         return dto;
     }
     @Transactional(readOnly = true)
@@ -70,7 +71,7 @@ public class UserService {
         if(person.getDateOfBirth() != null) {
             dto.setDateOfBirth(person.getDateOfBirth().toString());
         }
-        dto.setRoles(person.getRoles());
+        dto.setRole(person.getRole());
         dto.setPermissions(person.getPermissions());
         return dto;
     }
@@ -151,14 +152,10 @@ public class UserService {
             user.setStatus(request.getStatus());
         }
 
-        if (request.getRoles() != null) {
-            Set<Role> newRoles = new HashSet<>();
-            for (String roleName : request.getRoles()) {
-                Role role = roleRepository.findByName(roleName)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
-                newRoles.add(role);
-            }
-            person.setRoles(newRoles);
+        if (request.getRole() != null) {
+            Role role = roleRepository.findByName(request.getRole())
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + request.getRole()));
+            person.setRole(role);
         }
         if(request.getPermissions() != null) {
             Set<Permission> newPermissions = new HashSet<>();
@@ -172,6 +169,7 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return new UserDetails(updatedUser);
     }
+
 
 
 }

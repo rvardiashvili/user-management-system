@@ -34,7 +34,7 @@ public class Person {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_roles",
             joinColumns = @JoinColumn(name = "person_id"),
@@ -42,7 +42,7 @@ public class Person {
     )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Role> roles = new HashSet<>();
+    private Role role;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -53,4 +53,24 @@ public class Person {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Permission> permissions = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(
+            name = "person_addresses",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Address> addresses = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "person_positions",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "position_id")
+    )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Position position;
 }

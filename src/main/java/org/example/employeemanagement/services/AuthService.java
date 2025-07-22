@@ -40,7 +40,7 @@ public class AuthService {
         person.setUser(user);
         Role userRole = roleRepository.findByName("user")
                 .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
-        person.setRoles(Set.of(userRole));
+        person.setRole(userRole);
         user.setPerson(person);
 
         User savedUser = userRepository.save(user);

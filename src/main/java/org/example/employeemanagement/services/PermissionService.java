@@ -75,15 +75,15 @@ public class PermissionService {
         User current_user = getUserByEmail(email);
         Role mod = getRoleByName("moderator");
         Role admin = getRoleByName("admin");
-        if(user.getPerson().getRoles().contains(mod)){
-            if(!current_user.getPerson().getRoles().contains(admin)){
+        if(user.getPerson().getRole() == mod){
+            if(current_user.getPerson().getRole() != admin){
                 return permissionResponse;
             }
         }
-        if(user.getPerson().getRoles().contains(admin)){
+        if(user.getPerson().getRole() == admin){
             return permissionResponse;
         }
-        if(!(current_user.getPerson().getRoles().contains(admin) || current_user.getPerson().getRoles().contains(mod))){
+        if(!(current_user.getPerson().getRole() == admin || current_user.getPerson().getRole() == mod)){
             return permissionResponse;
         }
         Set<Permission> permissions = user.getPerson().getPermissions();
