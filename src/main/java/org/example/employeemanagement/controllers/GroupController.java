@@ -3,7 +3,6 @@ package org.example.employeemanagement.controllers;
 
 import jakarta.validation.Valid;
 import org.example.employeemanagement.domain.Group;
-import org.example.employeemanagement.domain.Position;
 import org.example.employeemanagement.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.example.employeemanagement.services.GroupService;
