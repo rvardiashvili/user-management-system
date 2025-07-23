@@ -11,6 +11,7 @@ import org.example.employeemanagement.repositories.GroupRepository;
 import org.example.employeemanagement.repositories.PermissionRepository;
 import org.example.employeemanagement.repositories.RoleRepository;
 import org.example.employeemanagement.repositories.UserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,11 @@ public class GroupService {
                 permissions.add(getPermissionByName(permissionName));
         }
         group.setPermissions(permissions);
-        groupRepository.save(group);
+        try {
+            groupRepository.save(group);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return group;
     }
 
@@ -81,7 +86,11 @@ public class GroupService {
                 permissions.add(getPermissionByName(permissionName));
         }
         group.setPermissions(permissions);
-        groupRepository.save(group);
+        try {
+            groupRepository.save(group);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return group;
     }
 
@@ -93,7 +102,11 @@ public class GroupService {
             return group;
 
         group.setName(name);
-        groupRepository.save(group);
+        try {
+            groupRepository.save(group);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return group;
     }
 
@@ -124,7 +137,11 @@ public class GroupService {
         for(String permissionName : permissions){
             group = deletePermission(group, permissionName, auth);
         }
-        groupRepository.save(group);
+        try {
+            groupRepository.save(group);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return group;
     }
 
@@ -140,7 +157,11 @@ public class GroupService {
         Group group = groupRepository.findById(group_id)
                 .orElseThrow(() -> new UsernameNotFoundException("Group not found: " + group_id));
         user.getPerson().getGroups().add(group);
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return new UserResponse(user);
     }
 
@@ -150,7 +171,11 @@ public class GroupService {
         Group group = groupRepository.findById(group_id)
                 .orElseThrow(() -> new UsernameNotFoundException("Group not found: " + group_id));
         user.getPerson().getGroups().remove(group);
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return new UserResponse(user);
     }
 

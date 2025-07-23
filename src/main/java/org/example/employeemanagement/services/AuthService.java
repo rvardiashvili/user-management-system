@@ -6,6 +6,7 @@ import org.example.employeemanagement.dto.SignUpRequest;
 import org.example.employeemanagement.dto.UserResponse;
 import org.example.employeemanagement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,14 +43,17 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
         person.setRole(userRole);
         user.setPerson(person);
-
-        User savedUser = userRepository.save(user);
-
         UserResponse responseDto = new UserResponse();
-        responseDto.setUserId(savedUser.getUserId());
-        responseDto.setEmail(savedUser.getEmail());
-        responseDto.setFirstName(savedUser.getPerson().getFirstName());
-        responseDto.setLastName(savedUser.getPerson().getLastName());
+        try {
+            User savedUser = userRepository.save(user);
+            responseDto.setUserId(savedUser.getUserId());
+            responseDto.setEmail(savedUser.getEmail());
+            responseDto.setFirstName(savedUser.getPerson().getFirstName());
+            responseDto.setLastName(savedUser.getPerson().getLastName());
+
+        }catch (DataAccessException e){
+            throw e;
+        }
 
         return responseDto;
     }

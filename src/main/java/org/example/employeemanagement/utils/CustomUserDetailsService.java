@@ -37,9 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> {
                     return new UsernameNotFoundException("User not found with email: " + email);
                 });
-        System.out.println("logged in");
         Collection<? extends GrantedAuthority> authorities = getAuthorities(user.getPerson());
-        System.out.println("authorities: " + authorities);
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
@@ -51,6 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(Person person) {
         Set<GrantedAuthority> authorities = new HashSet<>();
         Role role = person.getRole();
+        System.out.println("role: " + role.getName());
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         for (Permission permission : role.getPermissions()) {
             authorities.add(new SimpleGrantedAuthority(permission.getName()));

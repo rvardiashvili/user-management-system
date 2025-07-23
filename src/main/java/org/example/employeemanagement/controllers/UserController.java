@@ -21,25 +21,25 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyDetails(Authentication authentication) {
-        return ResponseEntity.ok(userService.getDetails(authentication.getName()));
+        return ResponseEntity.ok(userService.getDetails(authentication.getName(), authentication.getAuthorities(), authentication.getName()));
     }
 
     @GetMapping("/users/email/{email}")
-    @PreAuthorize("hasAuthority('view-users')")
-    public ResponseEntity<UserResponse> getUser(@PathVariable String email) {
-        return ResponseEntity.ok(userService.getDetails(email));
+    @PreAuthorize("hasAuthority('view-users') || hasAuthority('view-company')")
+    public ResponseEntity<UserResponse> getUser(@PathVariable String email, Authentication authentication) {
+        return ResponseEntity.ok(userService.getDetails(email, authentication.getAuthorities(), authentication.getName()));
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('view-users')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @PreAuthorize("hasAuthority('view-users') || hasAuthority('view-company')")
+    public ResponseEntity<List<UserResponse>> getAllUsers(Authentication authentication) {
+        return ResponseEntity.ok(userService.getAllUsers(authentication.getAuthorities()));
     }
 
     @GetMapping("/users/{userId}")
-    @PreAuthorize("hasAuthority('view-users')")
-    public ResponseEntity<UserResponse> getUserDetails(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getDetails(userId));
+    @PreAuthorize("hasAuthority('view-users') || hasAuthority('view-company')")
+    public ResponseEntity<UserResponse> getUserDetails(@PathVariable Long userId, Authentication authentication) {
+        return ResponseEntity.ok(userService.getDetails(userId, authentication.getAuthorities(), authentication.getName()));
     }
 
     @PutMapping("/users/{userId}")

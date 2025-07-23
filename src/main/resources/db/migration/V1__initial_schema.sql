@@ -1,17 +1,17 @@
 CREATE TABLE addresses (
     address_id BIGINT NOT NULL AUTO_INCREMENT,
     street VARCHAR(255) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    state VARCHAR(100),
+    city VARCHAR(128) NOT NULL,
+    state VARCHAR(128),
     postal_code VARCHAR(20) NOT NULL,
-    country VARCHAR(100) NOT NULL,
+    country VARCHAR(128) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (address_id)
 );
 
 CREATE TABLE users (
     user_id BIGINT NOT NULL AUTO_INCREMENT,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(128) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'active',
     created_at DATETIME NOT NULL DEFAULT NOW(),
@@ -23,10 +23,10 @@ CREATE TABLE users (
 CREATE TABLE persons (
     person_id BIGINT NOT NULL AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(50),
-    gender VARCHAR(50),
+    first_name VARCHAR(128) NOT NULL,
+    last_name VARCHAR(128) NOT NULL,
+    phone_number VARCHAR(64),
+    gender VARCHAR(8),
     date_of_birth DATE,
     created_at DATETIME NOT NULL DEFAULT NOW(),
     updated_at DATETIME NOT NULL DEFAULT NOW(),
@@ -37,24 +37,24 @@ CREATE TABLE persons (
 
 CREATE TABLE positions (
     position_id BIGINT NOT NULL AUTO_INCREMENT,
-    position_name VARCHAR(255) NOT NULL,
-    description TEXT,
+    position_name VARCHAR(128) NOT NULL,
+    description VARCHAR(1024),
     created_at DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (position_id)
 );
 
 CREATE TABLE roles (
     role_id BIGINT NOT NULL AUTO_INCREMENT,
-    role_name VARCHAR(100) NOT NULL,
-    description TEXT,
+    role_name VARCHAR(128) NOT NULL,
+    description VARCHAR(1024),
     PRIMARY KEY (role_id),
     UNIQUE (role_name)
 );
 
 CREATE TABLE permissions (
     permission_id BIGINT NOT NULL AUTO_INCREMENT,
-    permission_name VARCHAR(100) NOT NULL, -- e.g., 'user:create', 'user:read'
-    description TEXT,
+    permission_name VARCHAR(128) NOT NULL,
+    description VARCHAR(1024),
     PRIMARY KEY (permission_id),
     UNIQUE (permission_name)
 );

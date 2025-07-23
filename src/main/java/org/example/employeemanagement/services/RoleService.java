@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -43,26 +46,44 @@ public class RoleService {
     public GenericResponse changeRole(Long userId, String role_name,  Collection<? extends GrantedAuthority> authorities) {
         User user = getUserById(userId);
         Set<Permission> permissions = user.getPerson().getPermissions();
+        Set<String> authoritiesSet = authorities.stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        System.out.println("Role added:12321 ");
 
-        if(authorities.contains(getPermissionByName("ROLE_admin"))){
+        if(authoritiesSet.contains("ROLE_admin")){
+            System.out.println("Role added:admining ");
+
             Role newrole = getRoleByName(role_name);
             user.getPerson().setRole(newrole);
+            try {
             userRepository.save(user);
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
             return new GenericResponse(200, "user role changed");
         }
+        System.out.println("Role added:12321 ");
 
-        if(user.getPerson().getRole().getName() == "admin" || user.getPerson().getRole().getName() =="moderator"){
+        if(Objects.equals(user.getPerson().getRole().getName(), "admin") || Objects.equals(user.getPerson().getRole().getName(), "moderator")){
             return new GenericResponse(403, "only admin can change roles for moderators and admins");
         }
-        if(role_name == "employee" && authorities.contains(getPermissionByName("add-user"))){
+        System.out.println(authoritiesSet.contains("add-users"));
+        System.out.println(authoritiesSet);
+        System.out.println(role_name.equals("employee") && authoritiesSet.contains("add-users"));
+        if(role_name.equals("employee") && authoritiesSet.contains("add-users")){
+            System.out.println("Role added: " + "employee");
             Role newrole = getRoleByName(role_name);
             user.getPerson().setRole(newrole);
         }
-        if(role_name == "user" && authorities.contains(getPermissionByName("add-user"))){
+        if(role_name.equals("user") && authoritiesSet.contains("remove-users")){
             Role newrole = getRoleByName(role_name);
             user.getPerson().setRole(newrole);
         }
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
         return new GenericResponse(200, "user role changed");
     }
 

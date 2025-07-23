@@ -5,6 +5,7 @@ import org.example.employeemanagement.dto.*;
 import org.example.employeemanagement.repositories.AddressRepository;
 import org.example.employeemanagement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,11 @@ public class AddressService {
         address.setCountry(request.getCountry());
         addresses.add(address);
         person.setAddresses(addresses);
-        userRepository.save(user);
+        try{
+            userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return getDetails(email);
     }
 
@@ -78,8 +83,11 @@ public class AddressService {
             if(addressRequest.getCountry() != null && !addressRequest.getCountry().isBlank())
                 address.setCountry(addressRequest.getCountry());
         }
-        addressRepository.save(address);
-
+        try {
+            addressRepository.save(address);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return getDetails(email);
     }
 
@@ -90,9 +98,12 @@ public class AddressService {
                 .orElseThrow(() -> new RuntimeException("Address not found with id: " + address_id));
         if( user.getPerson().getAddresses() != null && user.getPerson().getAddresses().contains(address) ) {
             user.getPerson().getAddresses().remove(address);
-            userRepository.save(user);
-            addressRepository.deleteById(address_id);
-            System.out.println("Deleted address with id: " + address_id);
+            try {
+                userRepository.save(user);
+                addressRepository.deleteById(address_id);
+            }catch (DataAccessException e){
+                throw e;
+            }
         }
         return getDetails(user.getEmail());
     }
@@ -110,7 +121,11 @@ public class AddressService {
         address.setCountry(request.getCountry());
         addresses.add(address);
         person.setAddresses(addresses);
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return getDetails(user.getEmail());
     }
 
@@ -133,8 +148,11 @@ public class AddressService {
             if(addressRequest.getCountry() != null && !addressRequest.getCountry().isBlank())
                 address.setCountry(addressRequest.getCountry());
         }
-        addressRepository.save(address);
-
+        try {
+            addressRepository.save(address);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return getDetails(user.getEmail());
     }
 

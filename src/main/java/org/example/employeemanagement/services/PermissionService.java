@@ -41,7 +41,12 @@ public class PermissionService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
     }
     private User saveUser(User user) {
-        return userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return user;
     }
     private Permission getPermissionByName(String permissionName) {
         return permissionRepository.findByName(permissionName)

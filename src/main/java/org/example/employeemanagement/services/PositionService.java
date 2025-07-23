@@ -11,6 +11,7 @@ import org.example.employeemanagement.repositories.PermissionRepository;
 import org.example.employeemanagement.repositories.PositionRepository;
 import org.example.employeemanagement.repositories.RoleRepository;
 import org.example.employeemanagement.repositories.UserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,11 @@ public class PositionService {
         Position position = new Position();
         position.setName(request.getName());
         position.setDescription(request.getDescription());
-        positionRepository.save(position);
+        try {
+            positionRepository.save(position);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return position;
     }
 
@@ -69,7 +74,11 @@ public class PositionService {
         Position position = positionRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + name));
         user.getPerson().setPosition(position);
+        try {
         userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return new GenericResponse(200, "Successfully assigned position");
     }
 
@@ -77,7 +86,11 @@ public class PositionService {
     public GenericResponse removePositionFromUser(Long userId) {
         User user = getUserById(userId);
         user.getPerson().setPosition(null);
+        try {
         userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
         return new GenericResponse(200, "Successfully removed position from user");
     }
 

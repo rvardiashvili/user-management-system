@@ -1,5 +1,6 @@
 package org.example.employeemanagement.services;
 
+import jakarta.validation.constraints.Null;
 import org.example.employeemanagement.domain.*;
 import org.example.employeemanagement.dto.*;
 import org.example.employeemanagement.repositories.AddressRepository;
@@ -7,14 +8,14 @@ import org.example.employeemanagement.repositories.PermissionRepository;
 import org.example.employeemanagement.repositories.RoleRepository;
 import org.example.employeemanagement.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,6 @@ public class UserService {
     private final AddressRepository addressRepository;
 
     private User getUserByEmail(String email) {
-
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
@@ -37,9 +37,15 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
     }
 
-    @Transactional(readOnly = true)
     public UserResponse getDetails(String email) {
+        return getDetails(email, null, email);
+    }
 
+    @Transactional(readOnly = true)
+    public UserResponse getDetails(String email, Collection<? extends GrantedAuthority> authorities, String current_user) {
+
+        authorities = (authorities != null) ? authorities : Collections.emptyList();
+        Set<String> auth = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         User user = getUserByEmail(email);
         Person person = user.getPerson();
 
@@ -52,14 +58,16 @@ public class UserService {
         dto.setDateOfBirth(person.getDateOfBirth().toString());
         }
         dto.setRole(person.getRole());
-        dto.setPermissions(person.getPermissions());
-        dto.setAddresses(person.getAddresses());
-        dto.setPosition(person.getPosition());
+        if(auth.contains("view-users") || Objects.equals(current_user, email)) {
+            dto.setPermissions(person.getPermissions());
+            dto.setAddresses(person.getAddresses());
+            dto.setPosition(person.getPosition());
+        }
         return dto;
     }
     @Transactional(readOnly = true)
-    public UserResponse getDetails(Long id) {
-
+    public UserResponse getDetails(Long id, Collection<? extends GrantedAuthority> authorities,  String current_user) {
+        Set<String> auth = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         User user = getUserById(id);
         Person person = user.getPerson();
 
@@ -72,16 +80,26 @@ public class UserService {
             dto.setDateOfBirth(person.getDateOfBirth().toString());
         }
         dto.setRole(person.getRole());
-        dto.setPermissions(person.getPermissions());
-        dto.setPosition(person.getPosition());
+
+        if(auth.contains("view-users") || Objects.equals(getUserByEmail(current_user).getUserId(), user.getUserId())) {
+            dto.setPermissions(person.getPermissions());
+            dto.setPosition(person.getPosition());
+            dto.setAddresses(person.getAddresses());
+        }
         return dto;
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAllWithPerson().stream()
-                .map(UserResponse::new)
-                .collect(Collectors.toList());
+    public List<UserResponse> getAllUsers(Collection<? extends GrantedAuthority> authorities) {
+        Set<String> auth = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        if(auth.contains("view-users"))
+            return userRepository.findAllWithPerson().stream()
+                    .map(UserResponse::new)
+                    .collect(Collectors.toList());
+
+        List<UserDetails> details = userRepository.findAllWithPersonMinimal().stream()
+                .map(UserDetails::new).toList();
+        return details.stream().map(UserResponse::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -95,7 +113,11 @@ public class UserService {
         if(request.getDateOfBirth() != null)
             person.setDateOfBirth(request.getDateOfBirth());
 
+        try {
         userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
 
         return getDetails(email);
     }
@@ -109,7 +131,11 @@ public class UserService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        }catch (DataAccessException e){
+            throw e;
+        }
     }
 
     @Transactional

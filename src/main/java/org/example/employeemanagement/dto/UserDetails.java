@@ -1,6 +1,7 @@
 package org.example.employeemanagement.dto;
 
 import org.example.employeemanagement.domain.Person;
+import org.example.employeemanagement.domain.Position;
 import org.example.employeemanagement.domain.Role;
 import org.example.employeemanagement.domain.User;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class UserDetails {
     private String firstName;
     private String lastName;
     private String role;
+    private Position position;
 
     public UserDetails(User user) {
         this.userId = user.getUserId();
@@ -26,6 +28,7 @@ public class UserDetails {
             this.firstName = person.getFirstName();
             this.lastName = person.getLastName();
             this.role = person.getRole().getName();
+            this.position = person.getPosition();
         }
     }
 }

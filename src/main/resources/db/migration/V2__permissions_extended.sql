@@ -8,6 +8,8 @@ CREATE TABLE person_permissions (
 
 CREATE TABLE permission_groups (
     group_id BIGINT NOT NULL AUTO_INCREMENT,
+    group_name VARCHAR(128) NOT NULL UNIQUE,
+    group_description VARCHAR(1024),
     PRIMARY KEY (group_id)
 );
 
