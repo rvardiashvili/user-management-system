@@ -34,14 +34,52 @@ CREATE TABLE persons (
     UNIQUE (user_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+CREATE TABLE companies (
+    company_id BIGINT NOT NULL AUTO_INCREMENT,
+    creator_id BIGINT NOT NULL,
+    company_name VARCHAR(128) NOT NULL,
+    company_description VARCHAR(1024),
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    updated_at DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (company_id),
+    FOREIGN KEY (creator_id) REFERENCES persons(person_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE organisations (
+    organisation_id BIGINT NOT NULL AUTO_INCREMENT,
+    company_id BIGINT NOT NULL,
+    organisation_name VARCHAR(128) NOT NULL,
+    organisation_description VARCHAR(1024),
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    updated_at DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (organisation_id),
+    FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE organisational_units (
+    unit_id BIGINT NOT NULL AUTO_INCREMENT,
+    organisation_id BIGINT NOT NULL,
+    parent_id BIGINT,
+    unit_level INT NOT NULL,
+    unit_name VARCHAR(128) NOT NULL,
+    unit_description VARCHAR(1024),
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    updated_at DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (unit_id),
+    FOREIGN KEY (organisation_id) REFERENCES organisations(organisation_id) ON DELETE RESTRICT,
+    FOREIGN KEY (parent_id) REFERENCES organisational_units(unit_id) ON DELETE RESTRICT
+);
 
 CREATE TABLE positions (
     position_id BIGINT NOT NULL AUTO_INCREMENT,
     position_name VARCHAR(128) NOT NULL,
+    unit_id BIGINT NOT NULL,
     description VARCHAR(1024),
     created_at DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (position_id)
+    PRIMARY KEY (position_id),
+    FOREIGN KEY (unit_id) REFERENCES organisational_units(unit_id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE roles (
     role_id BIGINT NOT NULL AUTO_INCREMENT,
@@ -80,12 +118,34 @@ CREATE TABLE person_positions (
     FOREIGN KEY (position_id) REFERENCES positions(position_id) ON DELETE CASCADE
 );
 
-CREATE TABLE person_roles (
+CREATE TABLE company_person_roles (
     person_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
+    company_id BIGINT NOT NULL,
     PRIMARY KEY (person_id, role_id),
     FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
+    FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
+);
+
+CREATE TABLE organisation_person_roles (
+    person_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    organisation_id BIGINT NOT NULL,
+    PRIMARY KEY (person_id, role_id),
+    FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
+    FOREIGN KEY (organisation_id) REFERENCES organisations(organisation_id) ON DELETE CASCADE
+);
+
+CREATE TABLE unit_person_roles (
+    person_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    unit_id BIGINT NOT NULL,
+    PRIMARY KEY (person_id, role_id),
+    FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
+    FOREIGN KEY (unit_id) REFERENCES organisational_units(unit_id) ON DELETE CASCADE
 );
 
 CREATE TABLE role_permissions (
