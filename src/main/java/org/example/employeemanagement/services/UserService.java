@@ -1,6 +1,5 @@
 package org.example.employeemanagement.services;
 
-import jakarta.validation.constraints.Null;
 import org.example.employeemanagement.domain.*;
 import org.example.employeemanagement.dto.*;
 import org.example.employeemanagement.repositories.AddressRepository;
@@ -26,7 +25,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
-    private final AddressRepository addressRepository;
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)

@@ -2,13 +2,10 @@ package org.example.employeemanagement.dto;
 
 import org.example.employeemanagement.domain.Person;
 import org.example.employeemanagement.domain.Position;
-import org.example.employeemanagement.domain.Role;
 import org.example.employeemanagement.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor

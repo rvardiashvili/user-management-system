@@ -29,17 +29,9 @@ public class PositionService {
     private final RoleRepository roleRepository;
     private final PositionRepository positionRepository;
 
-    private Role getRoleByName(String roleName) {
-        return roleRepository.findByName(roleName)
-                .orElseThrow(() -> new UsernameNotFoundException("Role not found: " + roleName));
-    }
     private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
-    }
-    private Permission getPermissionByName(String permissionName) {
-        return permissionRepository.findByName(permissionName)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + permissionName));
     }
 
     @Transactional

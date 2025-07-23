@@ -33,10 +33,6 @@ public class GroupService {
     private final RoleRepository roleRepository;
     private final GroupRepository groupRepository;
 
-    private Role getRoleByName(String roleName) {
-        return roleRepository.findByName(roleName)
-                .orElseThrow(() -> new UsernameNotFoundException("Role not found: " + roleName));
-    }
     private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));

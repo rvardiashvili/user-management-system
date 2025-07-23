@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,15 +36,10 @@ public class RoleService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
     }
-    private Permission getPermissionByName(String permissionName) {
-        return permissionRepository.findByName(permissionName)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + permissionName));
-    }
 
     @Transactional
     public GenericResponse changeRole(Long userId, String role_name,  Collection<? extends GrantedAuthority> authorities) {
         User user = getUserById(userId);
-        Set<Permission> permissions = user.getPerson().getPermissions();
         Set<String> authoritiesSet = authorities.stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
         System.out.println("Role added:12321 ");

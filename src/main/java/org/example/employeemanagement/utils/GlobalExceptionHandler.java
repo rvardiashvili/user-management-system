@@ -1,4 +1,4 @@
-    /*package org.example.employeemanagement.utils;
+    package org.example.employeemanagement.utils;
 
     import org.example.employeemanagement.dto.ErrorResponse;
     import org.springframework.dao.DataAccessException;
@@ -33,4 +33,3 @@
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR); // Returns 500
         }
     }
-*/
