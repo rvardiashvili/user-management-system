@@ -122,7 +122,7 @@ CREATE TABLE company_person_roles (
     person_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     company_id BIGINT NOT NULL,
-    PRIMARY KEY (person_id, role_id),
+    PRIMARY KEY (person_id, company_id),
     FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
     FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
@@ -132,7 +132,7 @@ CREATE TABLE organisation_person_roles (
     person_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     organisation_id BIGINT NOT NULL,
-    PRIMARY KEY (person_id, role_id),
+    PRIMARY KEY (person_id, organisation_id),
     FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
     FOREIGN KEY (organisation_id) REFERENCES organisations(organisation_id) ON DELETE CASCADE
@@ -142,7 +142,7 @@ CREATE TABLE unit_person_roles (
     person_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     unit_id BIGINT NOT NULL,
-    PRIMARY KEY (person_id, role_id),
+    PRIMARY KEY (person_id, unit_id),
     FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
     FOREIGN KEY (unit_id) REFERENCES organisational_units(unit_id) ON DELETE CASCADE
