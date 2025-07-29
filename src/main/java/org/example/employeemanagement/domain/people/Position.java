@@ -17,7 +17,7 @@ public class Position {
     @Column(name="position_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "unit_id", nullable = false, unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

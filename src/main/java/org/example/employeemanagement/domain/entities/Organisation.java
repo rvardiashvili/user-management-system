@@ -21,7 +21,7 @@ public class Organisation {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "company_id", nullable = false, unique = true)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @Column(name="organisation_name", nullable = false)
@@ -31,6 +31,6 @@ public class Organisation {
     private String organisationDescription;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "organisation", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OrganisationalUnit> units;
 }

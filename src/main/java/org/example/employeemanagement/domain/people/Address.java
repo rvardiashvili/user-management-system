@@ -14,18 +14,18 @@ public class Address {
     @Column(name="address_id")
     private Long id;
 
-    @Column(name="street")
+    @Column(name="street", nullable=false)
     private String street;
 
-    @Column(name="city")
+    @Column(name="city", nullable=false)
     private String city;
 
-    @Column(name="state")
+    @Column(name="state", nullable=false)
     private String state;
 
-    @Column(name="postal_code")
+    @Column(name="postal_code", nullable=false)
     private String postalCode;
 
-    @Column(name="country")
+    @Column(name="country", nullable=false)
     private String country;
 }

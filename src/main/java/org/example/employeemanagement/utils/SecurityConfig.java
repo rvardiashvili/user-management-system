@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF disabled - Reconsider for browser-based apps
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html/**", "/api/files/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

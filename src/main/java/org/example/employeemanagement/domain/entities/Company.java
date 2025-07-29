@@ -19,7 +19,7 @@ public class Company {
     private Long companyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false, unique = true)
+    @JoinColumn(name = "creator_id", nullable = false)
     private Person creator;
 
     @Column(name="company_name", nullable = false)
@@ -29,7 +29,7 @@ public class Company {
     private String companyDescription;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Organisation> organisations;
 
 }

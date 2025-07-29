@@ -52,36 +52,36 @@ public class Person {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationPersonRole> organizationRoles = new HashSet<>();
+    private Set<OrganisationPersonRole> organizationRoles;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CompanyPersonRole> companyRoles = new HashSet<>();
+    private Set<CompanyPersonRole> companyRoles;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationalUnitPersonRole> unitRoles = new HashSet<>();
+    private Set<OrganisationalUnitPersonRole> unitRoles;
 
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationPersonPermission> organizationPermissions = new HashSet<>();
+    private Set<OrganisationPersonPermission> organizationPermissions;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CompanyPersonPermission> companyPermissions = new HashSet<>();
+    private Set<CompanyPersonPermission> companyPermissions;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationUnitPersonPermission> unitPermissions = new HashSet<>();
+    private Set<OrganisationUnitPersonPermission> unitPermissions;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // Adjust cascade as needed
     @JoinTable(
@@ -91,22 +91,22 @@ public class Person {
     )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Address> addresses = new HashSet<>();
+    private Set<Address> addresses ;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationGroupPerson> organizationGroupMemberships = new HashSet<>();
+    private Set<OrganisationGroupPerson> organizationGroupMemberships;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CompanyGroupPerson> companyGroupMemberships = new HashSet<>();
+    private Set<CompanyGroupPerson> companyGroupMemberships ;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrganisationalUnitGroupPerson> unitGroupMemberships = new HashSet<>();
+    private Set<OrganisationalUnitGroupPerson> unitGroupMemberships;
 
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -123,7 +123,7 @@ public class Person {
     )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Position> positions = new HashSet<>();
+    private Set<Position> positions;
 
 
 }

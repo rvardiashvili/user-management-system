@@ -1,31 +1,59 @@
+services:
+  # ----------------------------------------------------------------------
+  # MariaDB Database Service
+  # This section defines the MariaDB database container.
+  # ----------------------------------------------------------------------
+  db:
+    image: mariadb:10.6 # The Docker image to use for MariaDB.
+    # You can choose a specific version like 10.6, 10.11, 11.x, or 12.x.
+    # Always prefer a specific version over 'latest' for stability.
+    container_name: mariadb-container # A human-readable name for the database container.
+    environment:
+      # Environment variables for MariaDB setup.
+      # These are used by the MariaDB image to initialize the database.
+      MARIADB_ROOT_PASSWORD: "pass" # !!! IMPORTANT: Change this to a strong, secure password.
+      MARIADB_DATABASE: "app"     # !!! IMPORTANT: The name of the database your Java app will use.
+      MARIADB_USER: "app_user"              # !!! IMPORTANT: The username for your Java app to connect with.
+      MARIADB_PASSWORD: "userpass"      # !!! IMPORTANT: The password for the database user.
+    ports:
+      # Port mapping: "HOST_PORT:CONTAINER_PORT"
+      # This exposes the MariaDB port from the container to your host machine.
+      # You can connect to MariaDB from your host (e.g., with DataGrip) via localhost:3306.
+      - "3306:3306"
+    volumes:
+      # Data persistence: Use a named volume to store MariaDB data.
+      # This ensures your database data is not lost when the container is stopped or removed.
+      - db_data:/var/lib/mysql # 'db_data' is the named volume defined at the bottom of this file.
 
+  # ----------------------------------------------------------------------
+  # MinIO Object Storage Service
+  # This section defines the MinIO object storage container.
+  # MinIO is an S3-compatible object storage server.
+  # ----------------------------------------------------------------------
+  minio:
+    image: quay.io/minio/minio:latest # The Docker image for MinIO.
+    # Using 'latest' for convenience, but consider a specific version for production.
+    container_name: minio-container # A human-readable name for the MinIO container.
+    environment:
+      # Environment variables for MinIO setup.
+      # These define the root user credentials for accessing MinIO.
+      MINIO_ROOT_USER: "minioadmin"     # !!! IMPORTANT: Change this to a strong, secure access key.
+      MINIO_ROOT_PASSWORD: "minioadmin" # !!! IMPORTANT: Change this to a strong, secure secret key.
+      MINIO_BROWSER: "on"               # Enables the MinIO web console at the console address.
+    command: server /data --console-address ":9001" # Command to start MinIO server.
+      # /data is the directory where MinIO stores its data.
+    # --console-address ":9001" exposes the web console on port 9001.
+    ports:
+      # Port mapping: "HOST_PORT:CONTAINER_PORT"
+      # 9000 is the default port for the MinIO API.
+      # 9001 is the default port for the MinIO web console.
+      - "9000:9000" # MinIO API port
+      - "9001:9001" # MinIO Console port
+    volumes:
+      # Data persistence: Use a named volume to store MinIO data.
+      # This ensures your object storage data is not lost when the container is stopped or removed.
+      - minio_data:/data # 'minio_data' is the named volume defined below.
 
-  services:
-    # ----------------------------------------------------------------------
-    # MariaDB Database Service
-    # This section defines the MariaDB database container.
-    # ----------------------------------------------------------------------
-    db:
-      image: mariadb:10.6 # The Docker image to use for MariaDB.
-        # You can choose a specific version like 10.6, 10.11, 11.x, or 12.x.
-      # Always prefer a specific version over 'latest' for stability.
-      container_name: mariadb-container # A human-readable name for the database container.
-      environment:
-        # Environment variables for MariaDB setup.
-        # These are used by the MariaDB image to initialize the database.
-        MARIADB_ROOT_PASSWORD: "pass" # !!! IMPORTANT: Change this to a strong, secure password.
-        MARIADB_DATABASE: "app"     # !!! IMPORTANT: The name of the database your Java app will use.
-        MARIADB_USER: "app_user"              # !!! IMPORTANT: The username for your Java app to connect with.
-        MARIADB_PASSWORD: "userpass"      # !!! IMPORTANT: The password for the database user.
-      ports:
-        # Port mapping: "HOST_PORT:CONTAINER_PORT"
-        # This exposes the MariaDB port from the container to your host machine.
-        # You can connect to MariaDB from your host (e.g., with DataGrip) via localhost:3306.
-        - "3306:3306"
-      volumes:
-        # Data persistence: Use a named volume to store MariaDB data.
-        # This ensures your database data is not lost when the container is stopped or removed.
-        - db_data:/var/lib/mysql # 'db_data' is the named volume defined at the bottom of this file.
-
-  volumes:
-    db_data:
+volumes:
+  db_data:    # Named volume for MariaDB data persistence.
+  minio_data: # Named volume for MinIO data persistence.

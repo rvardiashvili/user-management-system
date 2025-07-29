@@ -19,24 +19,24 @@ public class OrganisationalUnit {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "organisation_id", nullable = false, unique = true)
+    @JoinColumn(name = "organisation_id", nullable = false)
     private Organisation organisation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "parent_id", nullable = false, unique = true)
+    @JoinColumn(name = "parent_id", nullable = false)
     private OrganisationalUnit parent;
 
-    @Column(name="unit_level")
+    @Column(name="unit_level", nullable = false)
     private int unitLevel;
 
-    @Column(name="unit_name")
+    @Column(name="unit_name", nullable = false)
     private String unitName;
 
     @Column(name="unit_description")
     private String unitDescription;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ToString.Exclude
     private List<OrganisationalUnit> children;
 }
