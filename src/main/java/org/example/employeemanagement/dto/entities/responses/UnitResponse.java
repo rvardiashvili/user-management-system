@@ -11,7 +11,6 @@ public class UnitResponse {
     private OrganisationReponse organisation;
 
     public UnitResponse(OrganisationalUnit unit) {
-        System.out.println("contruction response");
         if(unit != null) {
         this.id = unit.getUnitId();
         this.name = unit.getUnitName();

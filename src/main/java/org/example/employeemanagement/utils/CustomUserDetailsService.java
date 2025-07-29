@@ -29,31 +29,20 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (email == null || email.isBlank()) {
             throw new UsernameNotFoundException("Email cannot be empty.");
         }
-        System.out.println(email);
-        System.out.println("logging in");
-        System.out.println(userRepository.findByEmailWithDetails(email));
 
         User user = userRepository.findByEmailWithDetails(email)
                 .orElseThrow(() -> {
                     return new UsernameNotFoundException("User not found with email: " + email);
                 });
-        Collection<? extends GrantedAuthority> authorities = getAuthorities(user.getPerson());
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
-                authorities
+                new HashSet<>()
         );
     }
 
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Person person) {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        //addRoles(person, authorities);
-        //addPermissions(person, authorities);
-        //addGroups(person, authorities);
 
-        return authorities;
-    }
 
 
 

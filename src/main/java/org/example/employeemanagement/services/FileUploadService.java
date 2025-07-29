@@ -47,9 +47,7 @@ public class FileUploadService {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(defaultBucketName).build());
             if (!found) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(defaultBucketName).build());
-                System.out.println("Bucket '" + defaultBucketName + "' created successfully.");
             } else {
-                System.out.println("Bucket '" + defaultBucketName + "' already exists.");
             }
 
             try (InputStream is = file.getInputStream()) {
@@ -70,18 +68,13 @@ public class FileUploadService {
             uploadedFile.setBucketName(defaultBucketName);
             uploadedFile.setUser(userRepository.findByEmail(email).orElseThrow());
             uploadRepository.save(uploadedFile);
-            System.out.println("File uploaded successfully as object '" + objectName + "' to bucket '" + defaultBucketName + "'.");
             return objectName;
 
         } catch (MinioException e) {
-            System.err.println("MinIO error during upload: " + e.getMessage());
-            System.err.println("HTTP trace: " + e.httpTrace());
-            return e.getMessage();
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (IOException e) {
-            System.err.println("File I/O error during upload: " + e.getMessage());
-            return e.getMessage();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            System.err.println("Security/Algorithm error during upload: " + e.getMessage());
             return e.getMessage();
         }
     }
@@ -111,7 +104,7 @@ public class FileUploadService {
                 );
                 uploadRepository.deleteById(id);
             }catch (Exception e) {
-                System.err.println("Error while removing file: " + e.getMessage());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         }
     }
@@ -141,15 +134,11 @@ public class FileUploadService {
             );
 
         } catch (MinioException e) {
-            System.err.println("MinIO error during download of object '" + uploadedFile.getObjectName() + "': " + e.getMessage());
-            System.err.println("HTTP trace: " + e.httpTrace());
 
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO download failed: " + e.getMessage(), e);
         } catch (IOException e) {
-            System.err.println("File I/O error during download of object '" + uploadedFile.getObjectName() + "': " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File I/O error during download: " + e.getMessage(), e);
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            System.err.println("Security/Algorithm error during download of object '" + uploadedFile.getObjectName() + "': " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Security/Algorithm error during download: " + e.getMessage(), e);
         }
     }

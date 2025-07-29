@@ -41,7 +41,6 @@ public class AddressService {
             user.getPerson().getAddresses().remove(address);
             userRepository.save(user);
             addressRepository.deleteById(address_id);
-            System.out.println("Deleted address with id: " + address_id);
         }
         return getDetails(email);
     }

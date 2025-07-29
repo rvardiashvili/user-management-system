@@ -75,8 +75,6 @@ public class UserService {
         user.getPerson().getCompanyRoles().size();
         user.getPerson().getOrganizationRoles().size();
         user.getPerson().getUnitRoles().size();
-        System.out.println(user.getPerson().getCompanyRoles());
-        System.out.println("kala");
         if(scope.hasScopedPermission(current_user, permission))
             return new UserResponse(user);
         else
@@ -87,9 +85,7 @@ public class UserService {
     public List<UserResponse> getAllUsers(String scope_type, Long scope_id, String current_user_email) {
         User user = getUserByEmail(current_user_email);
         Scope scope = scopeFactory.createScope(scope_type, scope_id);
-        System.out.println(scope);
         Permission view_permission = getPermissionByName("view-users");
-        System.out.println(scope.hasScopedPermission(user, view_permission));
         if(scope.hasScopedPermission(user, view_permission))
             return scope.findAllUsers();
         else{

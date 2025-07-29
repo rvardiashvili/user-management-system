@@ -119,7 +119,6 @@ public class Scope {
             this.isCompany = true;
 
         } else if ("ORGANISATION".equals(scopeType)) {
-            System.out.println("constructing organisation");
             this.isOrganisation = true;
         } else if ("UNIT".equals(scopeType)) {
             this.isUnit = true;
@@ -184,15 +183,11 @@ public class Scope {
     public boolean hasScopedPermission(User user, Permission permission) {
         boolean hasPermission = false;
         hasPermission = checkInPermissions(user, permission) | checkInRoles(user, permission) | checkInGroups(user, permission);
-        System.out.println("is organisation" + isOrganisation);
         if(!hasPermission) {
-            System.out.println("Permission Not Found");
             if(this.isCompany) {
-                System.out.println("Company Permission Not Found");
                 return false;
             }
             else if(this.isOrganisation) {
-                System.out.println("inOrg");
                 Organisation organisation = organisationRepository.findById(this.scopeId).orElse(null);
                 Scope scope = scopeFactory("company", organisation.getCompany().getCompanyId());
                 return scope.hasScopedPermission(user, permission);
@@ -201,7 +196,6 @@ public class Scope {
                 OrganisationalUnit organisationalUnit = organisationalUnitRepository.findById(this.scopeId).orElse(null);
                 if(organisationalUnit.getUnitLevel() == 1){
                     Scope scope = scopeFactory("organisation", organisationalUnit.getOrganisation().getOrganisationId());
-                    System.out.println("kala");
                     return scope.hasScopedPermission(user, permission);
                 }
                 Scope scope = scopeFactory("unit", organisationalUnit.getParent().getUnitId());
@@ -221,7 +215,6 @@ public class Scope {
             result =  companyPersonPermissionRepository.findById(id).isPresent();
         }
         else if(this.isOrganisation){
-            System.out.println("checkingOrgPermission");
             OrganisationPersonPermissionId id = new OrganisationPersonPermissionId(this.scopeId, user.getPerson().getPersonId(), permission.getId());
 
             result = organisationPersonPermissionRepository.findById(id).isPresent();
@@ -244,13 +237,9 @@ public class Scope {
 
             scopedRole = companyPersonRoleRepository.findByCompanyAndPerson(company, user.getPerson());
         } else if (this.isOrganisation) {
-            System.out.println("checkingOrgRoles");
 
             Organisation org = organisationRepository.findById(this.scopeId).orElseThrow(() -> new UsernameNotFoundException("Organisation not found: " + this.scopeId));
-            System.out.println(org);
             scopedRole = organisationPersonRoleRepository.findByOrganisationAndPerson(org, user.getPerson());
-            System.out.println(org.getOrganisationId());
-            System.out.println(user.getPerson().getPersonId());
 
         } else if (this.isUnit) {
             OrganisationalUnit unit = organisationalUnitRepository.findById(this.scopeId).orElseThrow(() -> new UsernameNotFoundException("Unit not found: " + this.scopeId));

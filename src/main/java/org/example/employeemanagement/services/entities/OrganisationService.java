@@ -96,18 +96,14 @@ public class OrganisationService {
 
     @Transactional(readOnly = true)
     public List<OrganisationReponse> getAllOrganisations(String email) {
-        System.out.println("getAllOrganisations");
         User user = getUserByEmail(email);
         List<Company> companies;
         List<Organisation> organisations = new ArrayList<>();
         companies = user.getPerson().getCompanyRoles().stream().map(CompanyPersonRole::getCompany).toList();
-        System.out.println(companies);
         Permission permission = getPermissionByName("view-company");
         for(Company company : companies) {
-            System.out.println(company);
             for(Organisation organisation : company.getOrganisations()) {
                 Scope scope = scopeFactory.createScope("organisation", organisation.getOrganisationId());
-                System.out.println(scope);
                 if(scope.hasScopedPermission(user, getPermissionByName("view-company")))
                     organisations.add(organisation);
             }

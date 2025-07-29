@@ -33,7 +33,6 @@ public class FileUploadController {
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file, Authentication authentication) {
-        System.out.println("Uploading file " + file.getOriginalFilename());
         try {
             String objectName = fileUploadService.uploadFile(file, authentication.getName());
             return ResponseEntity.ok("File uploaded successfully! Object Name: " + objectName);
@@ -71,7 +70,6 @@ public class FileUploadController {
 
     @GetMapping("/download/{id}")
     public ResponseEntity<InputStreamResource> download(@PathVariable Long id, Authentication authentication) {
-        System.out.println("Attempting to download file with ID: " + id);
         try {
             FileDownloadResponse downloadResponse = fileUploadService.downloadFile(id, authentication.getName());
 

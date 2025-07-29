@@ -77,9 +77,7 @@ public class UnitService {
             if(!scope.hasScopedPermission(creatorUser, getPermissionByName("create-sub")))
                 return new GenericResponse(401, "You dont have permission to create unit within this organization");
 
-            System.out.println(scope);
             Organisation org = organisationRepository.findById(request.getOrganisationId()).orElseThrow(() -> new UsernameNotFoundException("Organisation not found"));
-            System.out.println(org);
 
             OrganisationalUnit unit = new OrganisationalUnit();
             unit.setUnitDescription(request.getDescription());
